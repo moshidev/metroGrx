@@ -25,9 +25,15 @@ def imprime_tiempos(html_content : str, parada: str) -> None:
             break
     
     if len(tiempos_albolote) > 0 and len(tiempos_armilla) > 0:
-        print(f"Tiempos para la parada {parada}:")
-        print(f"A Albolote: {', '.join(tiempos_albolote)}")
-        print(f"A Armilla: {', '.join(tiempos_armilla)}")
+        print(f"\"{parada}\". Minutos faltantes.\n")
+        rows = [
+            ['Dirección', 'Tranvía Inminente', 'Siguiente'],
+            ['Albolote', tiempos_albolote[0], tiempos_albolote[1]], 
+            ['Armilla', tiempos_armilla[0], tiempos_armilla[1]],
+        ]
+        widths = [max(map(len, col)) for col in zip(*rows)]
+        for row in rows:
+            print("  ".join((val.ljust(width) for val, width in zip(row, widths))))
     else:        
         print("No existe una parada con ese nombre")
     
