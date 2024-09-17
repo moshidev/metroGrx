@@ -16,6 +16,7 @@ def imprime_tiempos(html_content : str, parada: str) -> None:
     tabla = soup.find('table')
 
     # Extraer tiempos
+    tiempos_albolote, tiempos_armilla = [], []
     for row in tabla.find_all('tr')[1:]:  # Saltar el primer tr que contiene los encabezados
         fila = [col.get_text(strip=True) for col in row.find_all('td')]
         if parada in fila:
