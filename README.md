@@ -9,4 +9,4 @@ dado el nombre de una parada.
 
 ## .zshrc
 
-alias tram='(cd tiempo-parada && make .venv/bin/activate > /dev/null && echo "Caleta." && source .venv/bin/activate && python3 s.py "Caleta")'
+alias tram='(cd tiempo-parada && make .venv/bin/activate > /dev/null && source .venv/bin/activate && python3 tram.py "Caleta")'
