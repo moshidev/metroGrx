@@ -1,7 +1,8 @@
-import sys
 import requests
 from bs4 import BeautifulSoup
+from cmd import Cmd
 
+# Funciones relacionadas con la obtención de los horarios y paradas
 def obten_horarios() -> str:
     return requests.post("https://metropolitanogranada.es/MGhorariosreal.asp",
         headers={
@@ -10,6 +11,19 @@ def obten_horarios() -> str:
             "TE": "trailers",
             },
     ).content
+
+def get_paradas(html_content: str) -> list:
+    soup = BeautifulSoup(html_content, 'html.parser')
+    tabla = soup.find('table')
+    
+    # Extraer las filas
+    paradas = []
+    for row in tabla.find_all('tr')[1:]:  # Saltar el primer tr que contiene los encabezados
+        columnas = row.find_all('td')
+        fila = [col.get_text().strip() for col in columnas]
+        paradas.append(fila[0])  # Asumiendo que la primera columna es el nombre de la parada
+
+    return paradas
 
 def imprime_tiempos(html_content : str, parada: str) -> None:
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -37,22 +51,43 @@ def imprime_tiempos(html_content : str, parada: str) -> None:
             print("  ".join((val.ljust(width) for val, width in zip(row, widths))))
     else:        
         print("No existe una parada con ese nombre")
-    
-def run():
-    parada = None
-    if len(sys.argv) != 2:
-        parada = input("¿Qué parada quiere consultar? ")
-    else:
-        parada = sys.argv[1]
 
-    try:
-        html_content = obten_horarios()
-        imprime_tiempos(html_content, parada)
-    except ConnectionError:
-        print("No he conseguido establecer conexión con el servidor")
-        exit(1)
-    
-    exit(0)
+# Clase interactiva basada en CMD
+class TramCMD(Cmd):
+    def __init__(self):
+        super().__init__()
+        self.prompt = 'metroGrx> '
+        self.html_content = obten_horarios()
+        self.parada_options = get_paradas(self.html_content)
 
+    def do_parada(self, parada):
+        """
+        Consulta los tiempos para una parada específica.
+        Uso: parada <nombre de la parada>
+        """
+        if parada in self.parada_options:
+            imprime_tiempos(self.html_content, parada)
+        else:
+            print(f"Parada '{parada}' no encontrada. Prueba con una de las siguientes: {', '.join(self.parada_options)}")
+
+    def complete_parada(self, text, line, start_index, end_index):
+        if text: # Si ya he empezado a escribir la opción, filtrar las opciones existentes
+            return [
+                option for option in self.parada_options
+                if option.startswith(text)
+            ]
+        else:
+            return self.parada_options
+
+    def do_salir(self, arg):
+        """Salir del programa"""
+        print("Saliendo del sistema de metroGrx...")
+        return True
+
+# Ejecución principal
 if __name__ == '__main__':
-    run()
+    try:
+        tram_cmd = TramCMD()
+        tram_cmd.cmdloop()
+    except ConnectionError:
+        print("No se ha podido establecer conexión con el servidor.")
