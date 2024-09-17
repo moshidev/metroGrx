@@ -1,7 +1,7 @@
 .PHONY: run clean
 
 run: .venv/bin/activate
-	(source .venv/bin/activate && python3 s.py)
+	(source .venv/bin/activate && python3 tram.py)
 
 .venv/bin/activate: requirements.txt
 	make clean
