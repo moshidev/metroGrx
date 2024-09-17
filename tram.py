@@ -1,3 +1,4 @@
+import sys
 import requests
 from bs4 import BeautifulSoup
 from cmd import Cmd
@@ -87,7 +88,18 @@ class TramCMD(Cmd):
 # Ejecución principal
 if __name__ == '__main__':
     try:
-        tram_cmd = TramCMD()
-        tram_cmd.cmdloop()
+        # Si se pasa el nombre de la parada como argumento en la línea de comandos
+        if len(sys.argv) > 1:
+            parada = sys.argv[1]
+            html_content = obten_horarios()
+            paradas = get_paradas(html_content)
+            if parada in paradas:
+                imprime_tiempos(html_content, parada)
+            else:
+                print(f"Parada '{parada}' no encontrada. Prueba con una de las siguientes: {', '.join(paradas)}")
+        else:
+            # Iniciar modo interactivo
+            tram_cmd = TramCMD()
+            tram_cmd.cmdloop()
     except ConnectionError:
         print("No se ha podido establecer conexión con el servidor.")
