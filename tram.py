@@ -1,3 +1,7 @@
+# MIT LICENSE
+# Daniel Pedrosa © 2024
+# Yeray López © 2024
+
 import sys
 import requests
 from bs4 import BeautifulSoup
