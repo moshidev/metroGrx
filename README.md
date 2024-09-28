@@ -20,4 +20,4 @@ Depende en la información que proporciona la página web
 
 ## .zshrc
 
-`alias tram='(cd metroGrx && make .venv/bin/activate > /dev/null && source .venv/bin/activate && python3 tram.py "Caleta")'`
+`alias tram='(cd ~/MetroGrx && make .venv/bin/activate > /dev/null && source .venv/bin/activate && python3 tram.py "Caleta")'`
